@@ -11,6 +11,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{684D5221-068F-4006-A99B-DC0853F2B23A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{F8B5A4DF-1A93-46B8-BA74-7B0F55E05ACD}"
+	ProjectSection(SolutionItems) = preProject
+		Test\1.png = Test\1.png
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{A35B23A2-60E3-4AB9-A9F9-7ACC91DEC2B9}"
 EndProject
