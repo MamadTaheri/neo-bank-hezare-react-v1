@@ -2,6 +2,7 @@
 using Bugeto_Store.Common;
 using Bugeto_Store.Common.Dto;
 using Bugeto_Store.Domain.Entities.Users;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,10 +25,26 @@ namespace Bugeto_Store.Application.Services.Users.Commands.UserLogin
         }
         public ResultDTO<ResultUserloginDto> Execute(string Username, string Password)
         {
-            //string hashPassword = HashPassword.Execute(Password);
 
-            var user = _context.Users.Where(p => p.Email.Equals(Username)
-            //&& p.Password.Equals(hashPassword)
+            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
+            {
+                return new ResultDTO<ResultUserloginDto>()
+                {
+                    Data = new ResultUserloginDto()
+                    {
+
+                    },
+                    IsSuccess = false,
+                    Message = "نام کاربری و رمز عبور را وارد نمایید",
+                };
+            }
+
+
+
+            var user = _context.Users
+                .Include(p => p.UserInRoles)
+                .ThenInclude(p=>p.Role)
+                .Where(p => p.Email.Equals(Username)
             && p.IsActive == true)
             .FirstOrDefault();
 
@@ -40,24 +57,45 @@ namespace Bugeto_Store.Application.Services.Users.Commands.UserLogin
 
                     },
                     IsSuccess = false,
-                    Message = "نام کاربری یا رمز عبور اشتباه است.",
+                    Message = "کاربری با این ایمیل در سایت ثبت نام نکرده است",
                 };
             }
 
-            List<string> userRoles = _context.UserInRoles.Where(p => p.UserId == user.Id)
-                .ToList().Select(p=>p.Role.Name).ToList();
+            var passwordHasher = new PasswordHasher();
+            bool resultVerifyPassword = passwordHasher.VerifyPassword(user.Password, Password);
+            if (resultVerifyPassword == false)
+            {
+                return new ResultDTO<ResultUserloginDto>()
+                {
+                    Data = new ResultUserloginDto()
+                    {
+
+                    },
+                    IsSuccess = false,
+                    Message = "رمز وارد شده اشتباه است!",
+                };
+            }
+
+
+            var roles = "";
+            foreach (var item in user.UserInRoles)
+            {
+                roles += $"{item.Role.Name}";
+            }
+
 
             return new ResultDTO<ResultUserloginDto>()
             {
                 Data = new ResultUserloginDto()
                 {
-                    Roles = userRoles,
+                    Roles = roles,
                     UserId = user.Id,
+                    Name = user.FullName
                 },
-                IsSuccess=true,
-                Message="ورود به سایت با موفقیت انجام شد",
+                IsSuccess = true,
+                Message = "ورود به سایت با موفقیت انجام شد",
             };
-           
+
 
         }
     }
@@ -65,6 +103,7 @@ namespace Bugeto_Store.Application.Services.Users.Commands.UserLogin
     public class ResultUserloginDto
     {
         public long UserId { get; set; }
-        public List<String> Roles { get; set; }
+        public string Roles { get; set; }
+        public string Name { get; set; }
     }
 }
