@@ -5,6 +5,8 @@ VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{0ED3404A-22AF-4150-AB85-9D753C6AAC8E}"
 	ProjectSection(SolutionItems) = preProject
+		Doc\Clean Architecture.png = Doc\Clean Architecture.png
+		Doc\CQRS.png = Doc\CQRS.png
 		Doc\Doc.docx = Doc\Doc.docx
 	EndProjectSection
 EndProject
