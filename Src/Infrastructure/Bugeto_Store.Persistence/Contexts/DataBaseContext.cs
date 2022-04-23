@@ -22,9 +22,17 @@ namespace Bugeto_Store.Persistence.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // افزودن مقادیر پیش فرض به جدول  Roles
             modelBuilder.Entity<Role>().HasData(new Role { Id = 1, Name = nameof(UserRoles.Admin) });
             modelBuilder.Entity<Role>().HasData(new Role { Id = 2, Name = nameof(UserRoles.Operator) });
             modelBuilder.Entity<Role>().HasData(new Role { Id = 3, Name = nameof(UserRoles.Customer) });
+
+            // اعمال ایندکس بر روی فیلد ایمیل
+            // اعمال عدم تکراری بودن ایمیل
+            modelBuilder.Entity<User>().HasIndex(q => q.Email).IsUnique();
+
+            //اعمال فیلتر برای عدم نمایش حذف شده ها
+            modelBuilder.Entity<User>().HasQueryFilter(q => !q.IsRemoved);
         }
 
     }
