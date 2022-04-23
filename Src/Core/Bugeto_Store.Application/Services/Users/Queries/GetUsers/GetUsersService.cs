@@ -1,5 +1,6 @@
 ﻿using Bugeto_Store.Application.Interfaces.Contexts;
 using Bugeto_Store.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,25 +13,28 @@ namespace Bugeto_Store.Application.Services.Users.Queries.GetUsers
         {
             _context = context;
         }
-        public ResultGetUserDto Execute(RequestGetUserDto request)
+
+
+        public ReslutGetUserDto Execute(RequestGetUserDto request)
         {
             var users = _context.Users.AsQueryable();
             if (!string.IsNullOrWhiteSpace(request.SearchKey))
             {
-                users = users.Where(q => q.FullName.Contains(request.SearchKey) && q.Email.Contains(request.SearchKey));
+                users = users.Where(p => p.FullName.Contains(request.SearchKey) || p.Email.Contains(request.SearchKey));
             }
             int rowsCount = 0;
-            var usersList = users.ToPaged(request.Page, 20, out rowsCount).Select(q => new GetUsersDto
+            var usersList= users.ToPaged(request.Page, 20, out rowsCount).Select(p => new GetUsersDto
             {
-                Email = q.Email,
-                FullName = q.FullName,
-                Id = q.Id,
+                Email = p.Email,
+                FullName = p.FullName,
+                Id = p.Id,
+                IsActive= p.IsActive
             }).ToList();
 
-            return new ResultGetUserDto
+            return new ReslutGetUserDto
             {
                 Rows = rowsCount,
-                Users = usersList
+                Users = usersList,
             };
         }
     }
