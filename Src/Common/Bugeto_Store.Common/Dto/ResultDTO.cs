@@ -11,5 +11,11 @@ namespace Bugeto_Store.Common.Dto
         public bool IsSuccess { get; set; }
         public string Message { get; set; }
     }
+    public class ResultDTO<T>
+    {
+        public bool IsSuccess { get; set; }
+        public string Message { get; set; }
+        public T Data { get; set; }
+    }
 
 }
